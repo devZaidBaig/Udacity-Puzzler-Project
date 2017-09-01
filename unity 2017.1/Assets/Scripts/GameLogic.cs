@@ -11,6 +11,7 @@ public class GameLogic : MonoBehaviour
     public GameObject startPoint, playPoint, restartPoint;
     public GameObject[] puzzleSpheres; //An array to hold our puzzle spheres
 
+    public AudioSource failAudio;
     public int puzzleLength = 5; //How many times we light up.  This is the difficulty factor.  The longer it is the more you have to memorize in-game.
     public float puzzleSpeed = 1f; //How many seconds between puzzle display pulses
     private int[] puzzleOrder; //For now let's have 5 orbs
@@ -78,7 +79,7 @@ public class GameLogic : MonoBehaviour
         //Generate a random number one through five, save it in an array.  Do this n times.
         //Step through the array for displaying the puzzle, and checking puzzle failure or success.
         startUI.SetActive(false);
-        eventSystem.SetActive(false);
+        //eventSystem.SetActive(false);
         iTween.MoveTo(player, playPoint.transform.position, 5f);
         CancelInvoke("displayPattern");
         InvokeRepeating("displayPattern", 3, puzzleSpeed); //Start running through the displaypattern function
@@ -148,6 +149,7 @@ public class GameLogic : MonoBehaviour
     { //Do this when the player gets it wrong
         Debug.Log("You've Failed, Resetting puzzle");
 
+        failAudio.Play();
         currentSolveIndex = 0;
 
         startPuzzle();
@@ -169,15 +171,20 @@ public class GameLogic : MonoBehaviour
 
     public void finishingFlourish()
     { //A nice visual flourish when the player wins
-        //this.GetComponent<AudioSource>().Play(); //Play the success audio
+        this.GetComponent<AudioSource>().Play(); //Play the success audio
         restartUI.SetActive(true);
         playerWon = true;
 
     }
 
-    public void changeScene()
+    public void changeScene(string scene)
     {
-        SceneManager.LoadSceneAsync("mainScene");
+        SceneManager.LoadSceneAsync(scene);
+    }
+
+    public void ExitApp()
+    {
+        Application.Quit();
     }
 
 }
